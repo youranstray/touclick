@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <form action="Verify.php" method="POST" onsubmit="return tou_submit.call(this)" >
+        <textarea></textarea>
+		<input type="submit" value="submit" />
+    </form>
+    <script type='text/javascript' charset='utf-8' src='http://js.touclick.com/js.touclick?b=2b28d3b5-7753-4bc4-999c-fa7828d707de&pf=api&v=v2-2'></script>
+    <script type="text/javascript">
+        var is_checked = false; //表示是否验证成功
+        function tou_submit()
+        {
+            if (is_checked === true)
+            {
+                return true;
+            }
+            else
+            {
+                window.TouClick.Start({
+                    website_key: '2b28d3b5-7753-4bc4-999c-fa7828d707de',
+                    position_code: 0,//位置标记(范围：10<position_code<100 ,如不在此范围内,则为0)
+                    args: { 'this_form': this },//事件onInit、onLoading、onLoaded、onSuccess、onFail、onError 的共有第一参数
+                    captcha_style: { 'margin-left': '50px', 'margin-top': '100px' },//设置验证码外框的css样式
+                    onSuccess: function (args, check_obj)
+                    {
+                        console.log(check_obj);
+                        debugger
+                        //check_obj = {'check_key':'','check_address':''} 二次验证口令check_key与二次验证地址check_address
+                        is_checked = true;
+                        //获取form对象
+                        var this_form = args.this_form;
+                        var hidden_input_key = document.createElement('input');
+                        hidden_input_key.name = 'check_key';
+                        hidden_input_key.value = check_obj.check_key;
+                        hidden_input_key.type = 'hidden';
+                        //将二次验证口令赋值到隐藏域
+                        this_form.appendChild(hidden_input_key);
+                        var hidden_input_address = document.createElement('input');
+                        hidden_input_address.name = 'check_address';
+                        hidden_input_address.value = check_obj.check_address;
+                        hidden_input_address.type = 'hidden';
+                        //将二次验证地址赋值到隐藏域
+                        this_form.appendChild(hidden_input_address);
+                        //再次执行 tou_submit 函数
+                        this_form.submit();
+                    },
+                    onError: function (args)
+                    {
+                        //启用备用方案
+                    }
+                });
+                return false;
+            }
+        }
+    </script>
+   
+   
+</body>
+</html>
